@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
+import { apiFetch } from "@/lib/api";
 
 export type AutoState = "disponible" | "en_uso" | "mantenimiento";
 
@@ -9,15 +10,8 @@ export interface Auto {
   estado: AutoState;
 }
 
-const mockAutos: Auto[] = [
-  { id: "a1", modelo: "Chevrolet Aveo 2022", placa: "ABC-12-34", estado: "disponible" },
-  { id: "a2", modelo: "Nissan Versa 2023", placa: "XYZ-98-76", estado: "en_uso" },
-  { id: "a3", modelo: "Toyota Yaris 2021", placa: "DEF-45-67", estado: "mantenimiento" },
-  { id: "a4", modelo: "Volkswagen Vento 2020", placa: "LMN-11-22", estado: "disponible" },
-];
-
 export function useAutos() {
-  const [autos, setAutos] = useState<Auto[]>(mockAutos);
+  const [autos, setAutos] = useState<Auto[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const [stateFilter, setStateFilter] = useState<"Todos" | "Disponibles" | "En Uso" | "Mantenimiento">("Todos");
@@ -31,6 +25,29 @@ export function useAutos() {
   
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<Auto>>({ estado: "disponible" });
+
+  const fetchAutos = async () => {
+    try {
+      const response = await apiFetch('/automoviles');
+      const arrayAutos = response.data || response.automoviles || response;
+
+      if (Array.isArray(arrayAutos)) {
+        const adaptedAutos: Auto[] = arrayAutos.map((a: any) => ({
+          id: a.id.toString(),
+          modelo: a.modelo || "",
+          placa: a.placa || "",
+          estado: (a.estado || "disponible") as AutoState
+        }));
+        setAutos(adaptedAutos);
+      }
+    } catch (error) {
+      console.error("Error al cargar autos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchAutos();
+  }, []);
 
   useEffect(() => {
     const handler = setTimeout(() => {
@@ -100,29 +117,48 @@ export function useAutos() {
   const confirmStatusChange = async () => {
     if (!autoToUpdateStatus) return;
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 600));
-    setAutos(autos.map(a => a.id === autoToUpdateStatus.id ? { ...a, estado: newStatusSelection } : a));
-    setIsSaving(false);
-    handleCloseStatusModal();
+    
+    try {
+      await apiFetch(`/automoviles/${autoToUpdateStatus.id}/estado`, {
+        method: 'PATCH',
+        body: JSON.stringify({ estado: newStatusSelection })
+      });
+      await fetchAutos();
+      handleCloseStatusModal();
+    } catch (error: any) {
+      alert(`Error al cambiar estado: ${error.message}`);
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const handleSaveAuto = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
 
-    if (autoToEdit) {
-      setAutos(autos.map(a => a.id === autoToEdit.id ? { ...a, ...formData } as Auto : a));
-    } else {
-      const newAuto: Auto = {
-        ...formData,
-        id: Math.random().toString(36).substring(2, 11),
-      } as Auto;
-      setAutos([newAuto, ...autos]);
+    try {
+      if (autoToEdit) {
+        console.log("Edición de auto no conectada al backend aún");
+      } else {
+        const backendData = {
+          modelo: formData.modelo,
+          placa: formData.placa,
+          estado: formData.estado
+        };
+
+        await apiFetch('/automoviles', {
+          method: 'POST',
+          body: JSON.stringify(backendData)
+        });
+      }
+      
+      await fetchAutos();
+      handleCloseFormModal();
+    } catch (error: any) {
+      alert(`Error al guardar auto: ${error.message}`);
+    } finally {
+      setIsSaving(false);
     }
-    
-    setIsSaving(false);
-    handleCloseFormModal();
   };
 
   return {

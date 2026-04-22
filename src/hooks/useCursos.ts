@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { apiFetch } from "@/lib/api";
 
 export interface EnrolledStudent {
   id: string;
@@ -15,41 +16,8 @@ export interface Course {
   enrolledStudents: EnrolledStudent[];
 }
 
-const mockCourses: Course[] = [
-  {
-    id: "c1",
-    title: "Manejo Defensivo Básico",
-    description: "Curso teórico-práctico orientado a conductores novatos para evitar accidentes de tráfico y entender reglas de seguridad vial.",
-    durationHours: 20,
-    status: true,
-    enrolledStudents: [
-      { id: "s1", name: "María Fernández", status: "activo" },
-      { id: "s2", name: "Juan Pérez", status: "inactivo" },
-    ]
-  },
-  {
-    id: "c2",
-    title: "Licencia Comercial (Carga Pesada)",
-    description: "Preparación completa para la obtención de la licencia tipo C. Incluye maniobras con remolque.",
-    durationHours: 45,
-    status: true,
-    enrolledStudents: [
-      { id: "s3", name: "Carlos García", status: "activo" },
-      { id: "s4", name: "Luis Martínez", status: "activo" },
-    ]
-  },
-  {
-    id: "c3",
-    title: "Actualización de Reglas Modulares",
-    description: "Seminario intensivo sobre la nueva ley de tránsito vigente en el territorio nacional.",
-    durationHours: 5,
-    status: false,
-    enrolledStudents: []
-  }
-];
-
 export function useCursos() {
-  const [courses, setCourses] = useState<Course[]>(mockCourses);
+  const [courses, setCourses] = useState<Course[]>([]);
 
   // Estados visuales de modales
   const [isFormModalOpen, setIsFormModalOpen] = useState(false);
@@ -64,7 +32,39 @@ export function useCursos() {
   const [isSaving, setIsSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<Course>>({ status: true });
 
-  // Manejadores para Forma (Crear / Editar)
+  // --- CONEXIÓN AL BACKEND ---
+  const fetchCursos = async () => {
+    try {
+      const response = await apiFetch('/cursos');
+      const arrayCursos = response.data || response.cursos || response;
+
+      if (Array.isArray(arrayCursos)) {
+        // Adaptador: Backend (español) -> Frontend (inglés)
+        const adaptedCourses: Course[] = arrayCursos.map((c: any) => ({
+          id: c.id.toString(),
+          title: c.nombre || c.titulo || "Sin título",
+          description: c.descripcion || c.description || "Sin descripción",
+          durationHours: parseInt(c.duracion || c.duracionHoras || c.durationHours) || 0,
+          status: c.activo !== undefined ? c.activo : (c.status !== undefined ? c.status : true),
+          // Si tu backend devuelve alumnos inscritos, los adaptamos aquí
+          enrolledStudents: Array.isArray(c.inscritos) ? c.inscritos.map((s: any) => ({
+            id: s.id?.toString(),
+            name: `${s.nombre || ''} ${s.apellidoPaterno || ''}`.trim() || "Alumno",
+            status: s.activo ? "activo" : "inactivo"
+          })) : []
+        }));
+        setCourses(adaptedCourses);
+      }
+    } catch (error) {
+      console.error("Error al cargar cursos:", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCursos();
+  }, []);
+
+  // --- MANEJADORES DE UI ---
   const handleOpenFormModal = (course?: Course) => {
     if (course) {
       setSelectedCourse(course);
@@ -81,7 +81,6 @@ export function useCursos() {
     setSelectedCourse(null);
   };
 
-  // Manejadores para Ver Alumnos Inscritos
   const handleOpenStudentsModal = (course: Course) => {
     setViewingCourse(course);
     setIsStudentsModalOpen(true);
@@ -92,7 +91,6 @@ export function useCursos() {
     setViewingCourse(null);
   };
 
-  // Manejadores para Confirmar Toggle de Estado
   const promptToggleStatus = (course: Course) => {
     setSelectedCourse(course);
     setIsConfirmModalOpen(true);
@@ -102,39 +100,49 @@ export function useCursos() {
     if (!selectedCourse) return;
     setIsSaving(true);
     
-    // Simular retraso de base de datos
-    await new Promise(resolve => setTimeout(resolve, 600));
-
-    setCourses(courses.map(c => c.id === selectedCourse.id ? { ...c, status: !c.status } : c));
-    
-    setIsSaving(false);
-    setIsConfirmModalOpen(false);
-    setSelectedCourse(null);
+    try {
+      // Aquí iría tu apiFetch con PATCH al backend si tienes la ruta para cambiar estatus.
+      // Por ahora simulamos la recarga para que visualmente funcione sin errores:
+      await new Promise(resolve => setTimeout(resolve, 600));
+      setCourses(courses.map(c => c.id === selectedCourse.id ? { ...c, status: !c.status } : c));
+    } catch (error: any) {
+      alert(`Error al cambiar estado: ${error.message}`);
+    } finally {
+      setIsSaving(false);
+      setIsConfirmModalOpen(false);
+      setSelectedCourse(null);
+    }
   };
 
-  // Guardar datos (Crear o Actualizar)
   const handleSaveCourse = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
 
-    // Simular retraso de backend
-    await new Promise(resolve => setTimeout(resolve, 800));
+    try {
+      if (selectedCourse) {
+        console.log("Edición no conectada al backend aún");
+      } else {
+        // Crear nuevo registro
+        const backendData = {
+          nombre: formData.title, // <--- ¡CAMBIAMOS ESTO DE 'titulo' A 'nombre'!
+          descripcion: formData.description,
+          duracion: formData.durationHours,
+          activo: formData.status
+        };
 
-    if (selectedCourse) {
-      // Actualizar registro existente
-      setCourses(courses.map(c => c.id === selectedCourse.id ? { ...c, ...formData } as Course : c));
-    } else {
-      // Crear nuevo registro
-      const newCourse: Course = {
-        ...(formData as Course),
-        id: Math.random().toString(36).substring(2, 11),
-        enrolledStudents: [], // un curso nuevo arranca libre de alumnos
-      };
-      setCourses([newCourse, ...courses]);
+        await apiFetch('/cursos', {
+          method: 'POST',
+          body: JSON.stringify(backendData)
+        });
+      }
+      
+      await fetchCursos();
+      handleCloseFormModal();
+    } catch (error: any) {
+      alert(`Error al guardar curso: ${error.message}`);
+    } finally {
+      setIsSaving(false);
     }
-
-    setIsSaving(false);
-    handleCloseFormModal();
   };
 
   return {
