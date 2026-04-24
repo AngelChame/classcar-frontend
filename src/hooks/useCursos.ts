@@ -149,6 +149,7 @@ export function useCursos() {
     courses,
     isFormModalOpen,
     isConfirmModalOpen,
+    setIsConfirmModalOpen,
     isStudentsModalOpen,
     selectedCourse,
     viewingCourse,

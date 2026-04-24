@@ -8,6 +8,7 @@ export default function CursosPage() {
     courses,
     isFormModalOpen,
     isConfirmModalOpen,
+    setIsConfirmModalOpen,
     isStudentsModalOpen,
     selectedCourse,
     viewingCourse,
