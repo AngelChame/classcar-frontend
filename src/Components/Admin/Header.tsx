@@ -6,7 +6,6 @@ import { User, Bell } from "lucide-react";
 export function Header() {
   const pathname = usePathname();
 
-  // Create a mapping or logic to extract the title from pathname
   const getPageTitle = () => {
     if (pathname === "/admin") return "Dashboard";
     if (pathname?.includes("/admin/usuarios")) return "Usuarios";
@@ -22,7 +21,6 @@ export function Header() {
         {getPageTitle()}
       </h2>
 
-      {/* User Action Area */}
       <div className="flex items-center gap-5">
         <button className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-full transition-all relative">
           <Bell className="w-5 h-5" />
@@ -31,7 +29,6 @@ export function Header() {
 
         <div className="w-px h-8 bg-slate-200 mx-1"></div>
 
-        {/* Profile Avatar */}
         <div className="flex items-center gap-3 cursor-pointer group">
           <div className="flex flex-col items-end hidden sm:flex">
             <span className="text-sm font-bold text-slate-700 leading-none">Admin</span>

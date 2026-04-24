@@ -26,7 +26,6 @@ export default function CursosPage() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       
-      {/* SECCIÓN DEL ENCABEZADO */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 bg-white p-6 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 bg-indigo-50 rounded-2xl flex items-center justify-center text-indigo-600 shadow-inner">
@@ -46,7 +45,6 @@ export default function CursosPage() {
         </button>
       </div>
 
-      {/* GRID DE CURSOS (TARJETAS) */}
       {courses.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {courses.map((course) => (
@@ -56,7 +54,6 @@ export default function CursosPage() {
                 course.status ? 'border-slate-100' : 'border-slate-200/60 opacity-80'
               }`}
             >
-              {/* Card Header & Body */}
               <div className="p-6 flex-1 flex flex-col">
                 <div className="flex justify-between items-start mb-4">
                   <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border shadow-sm ${
@@ -68,7 +65,6 @@ export default function CursosPage() {
                     {course.status ? 'Activo' : 'Inactivo'}
                   </span>
 
-                  {/* Switch Toggle Activo/Inactivo */}
                   <button
                     onClick={() => promptToggleStatus(course)}
                     className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
@@ -89,7 +85,6 @@ export default function CursosPage() {
                   {course.description}
                 </p>
                 
-                {/* Metadatos (Duración) */}
                 <div className="mt-6 flex items-center gap-4 pt-5 border-t border-slate-100/80">
                   <div className="flex items-center gap-2 text-slate-600 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
                     <Clock className="w-4 h-4 text-indigo-500" />
@@ -102,7 +97,6 @@ export default function CursosPage() {
                 </div>
               </div>
 
-              {/* Botonera Footer */}
               <div className="bg-slate-50/50 p-4 border-t border-slate-100 flex items-center justify-between gap-3">
                 <button 
                   onClick={() => handleOpenStudentsModal(course)}
@@ -122,7 +116,6 @@ export default function CursosPage() {
           ))}
         </div>
       ) : (
-        /* ESTADO VACÍO (EMPTY STATE) */
         <div className="bg-white rounded-3xl p-16 shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 text-center">
           <div className="flex flex-col items-center justify-center text-slate-500 animate-in zoom-in-95 duration-300">
             <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-6 border border-slate-100 shadow-sm">
@@ -141,7 +134,6 @@ export default function CursosPage() {
         </div>
       )}
 
-      {/* MODAL DE CREACIÓN Y EDICIÓN DE CURSO */}
       {isFormModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200 relative">
@@ -215,7 +207,6 @@ export default function CursosPage() {
         </div>
       )}
 
-      {/* MODAL DE CONFIRMACIÓN DE ESTADO (ACTIVAR/DESACTIVAR) */}
       {isConfirmModalOpen && selectedCourse && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200 p-8 text-center relative">
@@ -255,7 +246,6 @@ export default function CursosPage() {
         </div>
       )}
 
-      {/* MODAL DE ALUMNOS INSCRITOS (READ-ONLY) */}
       {isStudentsModalOpen && viewingCourse && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200 relative flex flex-col max-h-[80vh]">

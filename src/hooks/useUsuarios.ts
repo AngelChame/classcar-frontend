@@ -39,7 +39,6 @@ export function useUsuarios() {
   // Estado del Formulario de Edición/Creación
   const [formData, setFormData] = useState<Partial<User>>({ role: "alumno", status: true });
   
-  // Efecto para la búsqueda con Debounce (retraso de 300ms)
   useEffect(() => {
     const handler = setTimeout(() => {
       setDebouncedSearchTerm(searchTerm);
@@ -54,7 +53,6 @@ export function useUsuarios() {
       if (roleFilter === "Instructores" && user.role !== "instructor") return false;
       if (roleFilter === "Alumnos" && user.role !== "alumno") return false;
       
-      // Comprobación de Búsqueda (Cruce entre Nombre, Apellidos o Correo)
       if (debouncedSearchTerm) {
         const query = debouncedSearchTerm.toLowerCase();
         const fullName = `${user.name} ${user.lastName}`.toLowerCase();
@@ -87,11 +85,9 @@ export function useUsuarios() {
     e.preventDefault();
     setIsSaving(true);
     
-    // Simular Petición de Red a la Base de Datos
     await new Promise(resolve => setTimeout(resolve, 800));
 
     if (userToEdit) {
-      // Actualizar registro existente
       setUsers(users.map(u => u.id === userToEdit.id ? { ...u, ...formData } as User : u));
     } else {
       // Crear registro nuevo
@@ -115,7 +111,6 @@ export function useUsuarios() {
     if (!userToToggle) return;
     setIsSaving(true);
     
-    // Simular Petición de Red para la Activación/Desactivación
     await new Promise(resolve => setTimeout(resolve, 500));
     
     setUsers(users.map(u => u.id === userToToggle.id ? { ...u, status: !u.status } : u));

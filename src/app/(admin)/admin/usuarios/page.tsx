@@ -28,7 +28,6 @@ export default function UsuariosPage() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       
-      {/* SECCIÓN DEL ENCABEZADO */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Gestión de Usuarios</h1>
@@ -43,10 +42,8 @@ export default function UsuariosPage() {
         </button>
       </div>
 
-      {/* BARRA DE BÚSQUEDA Y FILTRADO */}
       <div className="bg-white p-4 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 flex flex-col md:flex-row justify-between gap-4">
         
-        {/* Pestañas de Filtro por Rol */}
         <div className="flex bg-slate-100/80 p-1.5 rounded-2xl w-full md:w-auto overflow-x-auto">
           {["Todos", "Instructores", "Alumnos"].map((tab) => (
             <button
@@ -63,7 +60,6 @@ export default function UsuariosPage() {
           ))}
         </div>
 
-        {/* Cesta de Búsqueda */}
         <div className="relative w-full md:w-80 flex-shrink-0">
           <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
             <Search className="h-5 w-5 text-slate-400" />
@@ -78,7 +74,6 @@ export default function UsuariosPage() {
         </div>
       </div>
 
-      {/* TABLA PRINCIPAL DE DATOS */}
       <div className="bg-white rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-slate-100 overflow-hidden">
         <div className="overflow-x-auto min-h-[400px]">
           <table className="w-full text-left border-collapse">
@@ -128,7 +123,6 @@ export default function UsuariosPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-right">
                       <div className="flex flex-row-reverse items-center justify-start gap-4">
                         
-                        {/* Switch de control de activación */}
                         <button
                           onClick={() => promptToggleStatus(user)}
                           className={`relative w-11 h-6 rounded-full transition-colors focus:outline-none focus:ring-4 focus:ring-indigo-500/20 ${
@@ -178,7 +172,6 @@ export default function UsuariosPage() {
         </div>
       </div>
 
-      {/* MODAL DE CREACIÓN Y EDICIÓN */}
       {isModalOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-lg border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200 relative">
@@ -250,7 +243,6 @@ export default function UsuariosPage() {
                   </div>
                 </div>
 
-                {/* Mostrar especialidad únicamente param Instructores */}
                 {formData.role === "instructor" && (
                   <div className="space-y-2 animate-in fade-in slide-in-from-top-2">
                     <label className="text-sm font-bold text-slate-700 ml-1">Especialidad (Solo Instructores)</label>
@@ -286,7 +278,6 @@ export default function UsuariosPage() {
         </div>
       )}
 
-      {/* MODAL DE CONFIRMACIÓN DE ESTADO */}
       {isConfirmModalOpen && userToToggle && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center px-4 bg-slate-900/40 backdrop-blur-sm animate-in fade-in duration-200">
           <div className="bg-white rounded-3xl shadow-2xl w-full max-w-sm border border-slate-100 overflow-hidden animate-in zoom-in-95 duration-200 p-8 text-center relative">

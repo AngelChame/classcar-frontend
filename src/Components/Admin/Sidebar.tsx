@@ -17,7 +17,6 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 h-full bg-slate-900 text-slate-300 flex flex-col flex-shrink-0 shadow-xl z-20">
-      {/* Logo Area */}
       <div className="h-20 flex items-center px-6 border-b border-slate-800">
         <Link href="/admin" className="flex items-center gap-3 text-white transition-opacity hover:opacity-90">
           <CarFront className="w-8 h-8 text-indigo-500" strokeWidth={2.5} />
@@ -25,10 +24,8 @@ export function Sidebar() {
         </Link>
       </div>
 
-      {/* Navigation */}
       <nav className="flex-1 py-6 px-4 space-y-2 overflow-y-auto">
         {navItems.map((item) => {
-          // Exactly matching route or nested route matching
           const isActive = pathname === item.href || (item.href !== "/admin" && pathname?.startsWith(`${item.href}`));
           const Icon = item.icon;
           
@@ -49,7 +46,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Optional: Footer area of sidebar */}
+      
       <div className="p-6 border-t border-slate-800/50">
         <p className="text-xs text-slate-500 font-medium text-center">ClassCar Admin v1.0</p>
       </div>
