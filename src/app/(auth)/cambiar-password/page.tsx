@@ -31,13 +31,13 @@ export default function CambiarPasswordPage() {
 
     try {
       const token = localStorage.getItem("token");
-      
+
       if (!token) {
         router.push("/login");
         return;
       }
 
-      const response = await fetch("http://localhost:3000/api/auth/cambiar-password", {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/auth/cambiar-password`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ export default function CambiarPasswordPage() {
       }
 
       setExito(true);
-      
+
       setTimeout(() => {
         router.push("/login");
       }, 3000);
@@ -71,7 +71,7 @@ export default function CambiarPasswordPage() {
   return (
     <div className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
       <div className="bg-white max-w-md w-full rounded-2xl shadow-sm border border-slate-100 p-8">
-        
+
         <div className="flex flex-col items-center mb-8">
           <div className="bg-indigo-100 p-3 rounded-full mb-4">
             <KeyRound className="w-8 h-8 text-indigo-600" />

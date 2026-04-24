@@ -1,8 +1,8 @@
-const BASE_URL = 'http://localhost:3000/api';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ? `${process.env.NEXT_PUBLIC_API_URL}/api` : 'http://localhost:3000/api';
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   let token = '';
-  
+
   if (typeof window !== 'undefined') {
     token = localStorage.getItem('token') || '';
   }
