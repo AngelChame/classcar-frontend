@@ -95,7 +95,7 @@ export function useLogin() {
         body: JSON.stringify({ correo: email, contrasena: password }),
       });
 
-      // 2. Extraer de forma segura leyendo EXACTAMENTE lo que dice Postman
+      // 2. Extraer de forma segura el token y el usuario (Basado en la estructura de tu Postman)
       const tokenReal = response.data?.accessToken;
       const usuarioReal = response.data?.usuario;
 
@@ -108,14 +108,16 @@ export function useLogin() {
       localStorage.setItem("usuario", JSON.stringify(usuarioReal));
 
       // 4. Lógica de redirección por contraseña temporal
+      // Leemos la contraseña por defecto desde el .env.local
       const passwordPorDefecto = process.env.NEXT_PUBLIC_PASSWORD_DEFAULT || "Autoescuela2026";
       
+      // Verificamos si es la contraseña por defecto (del Admin) o una temporal (Alumnos/Instructores)
       if (password.startsWith("TMP_") || password === passwordPorDefecto) {
         router.push("/cambiar-password");
-        return;
+        return; // Detenemos la ejecución aquí para forzar el cambio de contraseña
       }
 
-      // 5. Redirección basada en el rol de la base de datos
+      // 5. Redirección basada en el rol de la base de datos (Si ya cambió su contraseña)
       const rol = usuarioReal.rol;
       if (rol === "admin") {
         router.push("/admin");
